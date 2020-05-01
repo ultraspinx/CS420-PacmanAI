@@ -13,12 +13,20 @@ class App:
         self.running = True
         self.state = 'start'
 
+        self.load()
+
     def run(self):
         while self.running:
             if self.state == 'start':
                 self.start_events()
                 self.start_update()
                 self.start_draw()
+            elif self.state == 'playing':
+                self.playing_update()
+                self.playing_draw()
+                self.playing_events()
+            else:
+                self.running = False
             self.clock.tick(FPS)
         pygame.quit()
         sys.exit()
@@ -33,6 +41,10 @@ class App:
             position[1] = position[1] - text_size[1]//2
         screen.blit(text, position)
 
+    def load(self):
+        self.background = pygame.image.load('maze.png')
+        self.background = pygame.transform.scale(
+            self.background, (WIDTH, HEIGHT))
 ########################################### INTRO FUNCTIONS ###########################################
 
     def start_events(self):
@@ -55,4 +67,18 @@ class App:
                        (33, 137, 156), START_FONT, center=True)
         self.draw_text('SELECT LEVEL ', self.screen, [WIDTH//2 - 15, HEIGHT//2 + 55], START_TEXT_SIZE,
                        (247, 243, 242), START_FONT, center=True)
+        pygame.display.update()
+
+########################################### PLAYING FUNCTIONS ###########################################
+
+    def playing_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+
+    def playing_update(self):
+        pass
+
+    def playing_draw(self):
+        self.screen.blit(self.background, (0, 0))
         pygame.display.update()
