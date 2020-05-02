@@ -12,6 +12,8 @@ class App:
         self.clock = pygame.time.Clock()
         self.running = True
         self.state = 'start'
+        self.cell_width = MAZE_WIDTH//28
+        self.cell_height = MAZE_HEIGHT//30
 
         self.load()
 
@@ -44,8 +46,19 @@ class App:
     def load(self):
         self.background = pygame.image.load('maze.png')
         self.background = pygame.transform.scale(
-            self.background, (WIDTH, HEIGHT))
+            self.background, (MAZE_WIDTH, MAZE_HEIGHT))
+
+    def draw_grid(self):
+        for x in range(WIDTH//self.cell_width):
+            pygame.draw.line(
+                self.background, GREY, (x*self.cell_width, 0), (x*self.cell_width, HEIGHT))
+        for x in range(HEIGHT//self.cell_height):
+            pygame.draw.line(
+                self.background, GREY, (0, x*self.cell_height), (WIDTH, x*self.cell_height))
+
+
 ########################################### INTRO FUNCTIONS ###########################################
+
 
     def start_events(self):
         for event in pygame.event.get():
@@ -80,5 +93,8 @@ class App:
         pass
 
     def playing_draw(self):
-        self.screen.blit(self.background, (0, 0))
+        self.screen.fill(BLACK)
+        self.screen.blit(
+            self.background, (TOP_BOTTOM_BUFFER//2, TOP_BOTTOM_BUFFER//2))
+        self.draw_grid()
         pygame.display.update()
