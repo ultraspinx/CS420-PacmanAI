@@ -1,6 +1,7 @@
 import pygame
 import sys
 from settings import *
+from player_class import *
 
 pygame.init()
 vec = pygame.math.Vector2
@@ -14,6 +15,7 @@ class App:
         self.state = 'start'
         self.cell_width = MAZE_WIDTH//28
         self.cell_height = MAZE_HEIGHT//30
+        self.player = Player(self, PLAYER_START_POSITION)
 
         self.load()
 
@@ -59,7 +61,6 @@ class App:
 
 ########################################### INTRO FUNCTIONS ###########################################
 
-
     def start_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -97,4 +98,9 @@ class App:
         self.screen.blit(
             self.background, (TOP_BOTTOM_BUFFER//2, TOP_BOTTOM_BUFFER//2))
         self.draw_grid()
+        self.draw_text('CURRENT SCORE: 0', self.screen,
+                       [60, 0], 18, WHITE, START_FONT)
+        self.draw_text('HIGH SCORE: 0', self.screen,
+                       [WIDTH//2 + 60, 0], 18, WHITE, START_FONT)
+        self.player.draw()
         pygame.display.update()
