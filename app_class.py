@@ -57,7 +57,7 @@ class App:
                 for xidx, char in enumerate(line):
                     if char == "1":
                         self.walls.append(vec(xidx, yidx))
-        print(len(self.walls))
+        # print(len(self.walls))
 
     def draw_grid(self):
         for x in range(WIDTH//self.cell_width):
@@ -66,6 +66,9 @@ class App:
         for x in range(HEIGHT//self.cell_height):
             pygame.draw.line(
                 self.background, GREY, (0, x*self.cell_height), (WIDTH, x*self.cell_height))
+        for wall in self.walls:
+            pygame.draw.rect(self.background, (112, 55, 163), (wall.x*self.cell_width,
+                                                               wall.y*self.cell_height, self.cell_width, self.cell_height))
 
 
 ########################################### INTRO FUNCTIONS ###########################################
