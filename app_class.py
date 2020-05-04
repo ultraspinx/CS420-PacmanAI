@@ -15,11 +15,13 @@ class App:
         self.state = 'start'
         self.cell_width = MAZE_WIDTH//28
         self.cell_height = MAZE_HEIGHT//30
-        self.player = Player(self, PLAYER_START_POSITION)
+
         self.walls = []
         self.coins = []
 
+        self.player_pos = None
         self.load()
+        self.player = Player(self, self.player_pos)
 
     def run(self):
         while self.running:
@@ -56,10 +58,15 @@ class App:
         with open("walls.txt", 'r',) as file:
             for yidx, line in enumerate(file):
                 for xidx, char in enumerate(line):
+                    # WALLS
                     if char == "1":
                         self.walls.append(vec(xidx, yidx))
-                    if char == "C":
+                    # COINS
+                    elif char == "C":
                         self.coins.append(vec(xidx, yidx))
+                    # PLAYER
+                    elif char == "P":
+                        self.player_pos = vec(xidx, yidx)
         # print(len(self.walls))
 
     def draw_grid(self):
@@ -75,6 +82,7 @@ class App:
 
 
 ########################################### INTRO FUNCTIONS ###########################################
+
 
     def start_events(self):
         for event in pygame.event.get():
@@ -124,7 +132,7 @@ class App:
         self.draw_coins()
         # self.draw_grid()
 
-        self.draw_text('CURRENT SCORE: {}'.format(self.player.current_score ), self.screen,
+        self.draw_text('CURRENT SCORE: {}'.format(self.player.current_score), self.screen,
                        [60, 0], 18, WHITE, START_FONT)
         self.draw_text('HIGH SCORE: 0', self.screen,
                        [WIDTH//2 + 60, 0], 18, WHITE, START_FONT)
