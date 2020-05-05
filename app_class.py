@@ -78,8 +78,8 @@ class App:
         # print(len(self.walls))
 
     def make_enemies(self):
-        for position in self.enemy_pos:
-            self.enemies.append(Enemy(self, position))
+        for idx, position in enumerate(self.enemy_pos):
+            self.enemies.append(Enemy(self, position, idx))
 
     def draw_grid(self):
         for x in range(WIDTH//self.cell_width):
