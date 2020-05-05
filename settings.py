@@ -18,6 +18,6 @@ START_TEXT_SIZE = 16
 START_FONT = 'arial black'
 
 # player settings
-PLAYER_START_POSITION = 0
+#PLAYER_START_POSITION = 0
 
 # ememy settings

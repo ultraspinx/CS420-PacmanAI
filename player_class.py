@@ -1,5 +1,6 @@
 from settings import *
 import pygame
+
 vec = pygame.math.Vector2
 
 
@@ -21,7 +22,7 @@ class Player:
                 self.direction = self.stored_direction
             self.able_to_move = self.can_move()
 
-        # Tracking function
+        # Tracking the player
         self.grid_pos[0] = (
             self.pix_pos[0] - TOP_BOTTOM_BUFFER // 2) // self.app.cell_width
         self.grid_pos[1] = (
