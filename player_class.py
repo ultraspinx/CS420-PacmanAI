@@ -14,6 +14,7 @@ class Player:
         self.able_to_move = True
         self.current_score = 0
         self.speed = 2
+        self.lives = 3
 
     def update(self):
         if self.able_to_move:
@@ -50,6 +51,12 @@ class Player:
     def draw(self):
         pygame.draw.circle(self.app.screen, PLAYER_COLOR,
                            (int(self.pix_pos.x), int(self.pix_pos.y)), self.app.cell_width//2-2)
+
+        # draw lives of player
+        for x in range(self.lives):
+            pygame.draw.circle(self.app.screen, PLAYER_COLOR,
+                               (30 + x*20, HEIGHT - 15), self.app.cell_width//2-2)
+
         # Draw the tracking box
         pygame.draw.rect(self.app.screen, RED, (self.grid_pos[0]*self.app.cell_width + TOP_BOTTOM_BUFFER//2,
                                                 self.grid_pos[1]*self.app.cell_height+TOP_BOTTOM_BUFFER//2, self.app.cell_width, self.app.cell_height), 1)
