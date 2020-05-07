@@ -13,10 +13,11 @@ class Player:
         self.stored_direction = None
         self.able_to_move = True
         self.current_score = 0
+        self.speed = 2
 
     def update(self):
         if self.able_to_move:
-            self.pix_pos += self.direction
+            self.pix_pos += self.direction * self.speed
         if self.time_to_move():
             if self.stored_direction != None:
                 self.direction = self.stored_direction
@@ -61,7 +62,7 @@ class Player:
             vec((self.grid_pos.x*self.app.cell_width)+TOP_BOTTOM_BUFFER//2 + (self.app.cell_width//2),
                 (self.grid_pos.y*self.app.cell_height)+TOP_BOTTOM_BUFFER//2 + (self.app.cell_height//2)))
 
-    #allow to move when at a cell
+    # allow to move when at a cell
     def time_to_move(self):
         if int(self.pix_pos.x + TOP_BOTTOM_BUFFER // 2) % self.app.cell_width == 0:
             if self.direction == vec(1, 0) or self.direction == vec(-1, 0):
