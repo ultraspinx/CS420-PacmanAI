@@ -1,5 +1,6 @@
 import pygame
 import sys
+import copy
 from settings import *
 from player_class import *
 from enemy_class import *
@@ -25,7 +26,7 @@ class App:
         self.enemy_pos = []
         self.load()
 
-        self.player = Player(self, self.player_pos)
+        self.player = Player(self, vec(self.player_pos))
         self.make_enemies()
 
     def run(self):
@@ -35,9 +36,13 @@ class App:
                 self.start_update()
                 self.start_draw()
             elif self.state == 'playing':
+                self.playing_events()
                 self.playing_update()
                 self.playing_draw()
-                self.playing_events()
+            elif self.state == 'gameOver':
+                self.gameOver_events()
+                self.gameOver_update()
+                self.gameOver_draw()
             else:
                 self.running = False
             self.clock.tick(FPS)
@@ -72,14 +77,14 @@ class App:
                         self.coins.append(vec(xidx, yidx))
                     # PLAYER
                     elif char == "P":
-                        self.player_pos = vec(xidx, yidx)
+                        self.player_pos = [xidx, yidx]
                     elif char in ["2", "3", "4", "5"]:
-                        self.enemy_pos.append(vec(xidx, yidx))
+                        self.enemy_pos.append([xidx, yidx])
         # print(len(self.walls))
 
     def make_enemies(self):
         for idx, position in enumerate(self.enemy_pos):
-            self.enemies.append(Enemy(self, position, idx))
+            self.enemies.append(Enemy(self, vec(position), idx))
 
     def draw_grid(self):
         for x in range(WIDTH//self.cell_width):
@@ -92,9 +97,31 @@ class App:
             pygame.draw.rect(self.screen, (112, 55, 163), (wall.x*self.cell_width + TOP_BOTTOM_BUFFER//2,
                                                            wall.y*self.cell_height + TOP_BOTTOM_BUFFER//2, self.cell_width, self.cell_height))
 
+    def reset(self):
+        # Reset player
+        self.player.lives = 1
+        self.player.current_score = 0
+        self.player.grid_pos = vec(self.player.starting_pos)
+        self.player.pix_pos = self.player.get_pix_pos()
+        self.player.direction *= 0
+
+        # Reset enemy
+        for enemy in self.enemies:
+            enemy.grid_pos = vec(enemy.starting_pos)
+            enemy.pix_pos = enemy.get_pix_pos()
+            enemy.direction *= 0
+
+        # makes coin from map again
+        self.coins = []
+        with open("walls.txt", 'r',) as file:
+            for yidx, line in enumerate(file):
+                for xidx, char in enumerate(line):
+                    if char == 'C':
+                        self.coins.append(vec(xidx, yidx))
+        self.state = "playing"
+
 
 ########################################### INTRO FUNCTIONS ###########################################
-
 
     def start_events(self):
         for event in pygame.event.get():
@@ -138,6 +165,8 @@ class App:
         self.player.update()
         for enemy in self.enemies:
             enemy.update()
+            if enemy.grid_pos == self.player.grid_pos:
+                self.remove_life()
 
     def playing_draw(self):
         self.screen.fill(BLACK)
@@ -158,7 +187,48 @@ class App:
 
         pygame.display.update()
 
+    def remove_life(self):
+        self.player.lives -= 1
+        if self.player.lives == 0:
+            self.state = "gameOver"
+        else:
+            self.player.grid_pos = vec(self.player.starting_pos)
+            self.player.pix_pos = self.player.get_pix_pos()
+            self.player.direction *= 0
+
+            # reset enemy position
+            for enemy in self.enemies:
+                enemy.grid_pos = vec(enemy.starting_pos)
+                enemy.pix_pos = enemy.get_pix_pos()
+                enemy.direction *= 0
+
     def draw_coins(self):
         for coin in self.coins:
             pygame.draw.circle(self.screen, (124, 123, 7), (int(
                 coin.x*self.cell_width) + self.cell_width//2 + TOP_BOTTOM_BUFFER//2, int(coin.y*self.cell_height) + self.cell_height//2 + TOP_BOTTOM_BUFFER//2), 5)
+
+########################################### GAMEOVER FUNCTIONS ###########################################
+
+    def gameOver_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                self.reset()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.running = False
+
+    def gameOver_update(self):
+        pass
+
+    def gameOver_draw(self):
+        self.screen.fill(BLACK)
+        quit_text = "Press ESC to QUIT"
+        again_text = "Press SPACE to PLAY AGAIN"
+        self.draw_text('GAME OVER ', self.screen, [WIDTH//2, 100], 52,
+                       RED, "arial", center=True)
+        self.draw_text(again_text, self.screen, [WIDTH//2, HEIGHT//2], 36,
+                       (190, 190, 190), "arial", center=True)
+        self.draw_text(quit_text, self.screen, [WIDTH//2, HEIGHT//1.5], 36,
+                       (190, 190, 190), "arial", center=True)
+        pygame.display.update()

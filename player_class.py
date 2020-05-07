@@ -7,14 +7,15 @@ vec = pygame.math.Vector2
 class Player:
     def __init__(self, app, pos):
         self.app = app
-        self.grid_pos = pos
+        self.starting_pos = [pos.x, pos.y]
+        self.grid_pos = vec(pos[0], pos[1])
         self.pix_pos = self.get_pix_pos()
         self.direction = vec(1, 0)
         self.stored_direction = None
         self.able_to_move = True
         self.current_score = 0
         self.speed = 2
-        self.lives = 3
+        self.lives = 1
 
     def update(self):
         if self.able_to_move:
@@ -72,10 +73,10 @@ class Player:
     # allow to move when at a cell
     def time_to_move(self):
         if int(self.pix_pos.x + TOP_BOTTOM_BUFFER // 2) % self.app.cell_width == 0:
-            if self.direction == vec(1, 0) or self.direction == vec(-1, 0):
+            if self.direction == vec(1, 0) or self.direction == vec(-1, 0) or self.direction == vec(0, 0):
                 return True
         if int(self.pix_pos.y + TOP_BOTTOM_BUFFER // 2) % self.app.cell_height == 0:
-            if self.direction == vec(0, 1) or self.direction == vec(0, -1):
+            if self.direction == vec(0, 1) or self.direction == vec(0, -1) or self.direction == vec(0, 0):
                 return True
 
     def can_move(self):
