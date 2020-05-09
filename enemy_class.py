@@ -68,12 +68,15 @@ class Enemy:
     def move(self):
         if self.personality == "random":
             self.direction = self.get_random_direction()
-        # if self.personality == "slow":
-        #     self.direction = self.get_path_direction(self.target)
-        # if self.personality == "speedy":
-        #     self.direction = self.get_path_direction(self.target)
-        # if self.personality == "scared":
-        #     self.direction = self.get_path_direction(self.target)
+        if self.personality == "slow":
+            # self.get_path_direction(self.target)
+            self.direction = self.get_random_direction()
+        if self.personality == "speedy":
+            # self.get_path_direction(self.target)
+            self.direction = self.get_random_direction()
+        if self.personality == "scared":
+            # self.get_path_direction(self.target)
+            self.direction = self.get_random_direction()
 
     def get_path_direction(self, target):
         next_cell = self.find_next_cell_in_path(target)
