@@ -16,10 +16,12 @@ class Player:
         self.current_score = 0
         self.speed = 2
         self.lives = 1
+        self.temp = self.pix_pos
 
     def update(self):
         if self.able_to_move:
-            self.pix_pos += self.direction * self.speed
+            self.pix_pos += self.direction  # * self.speed
+            #print(self.pix_pos)
         if self.time_to_move():
             if self.stored_direction != None:
                 self.direction = self.stored_direction
@@ -47,7 +49,7 @@ class Player:
 
     def eat_coin(self):
         self.app.coins.remove(self.grid_pos)
-        self.current_score += 1
+        self.current_score += 20
 
     def draw(self):
         pygame.draw.circle(self.app.screen, PLAYER_COLOR,

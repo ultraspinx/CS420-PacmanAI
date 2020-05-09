@@ -18,6 +18,7 @@ class App:
         self.cell_width = MAZE_WIDTH // COLS
         self.cell_height = MAZE_HEIGHT // ROWS
         self.level = 0
+        self.wallFile = self.get_wall_file()
 
         self.walls = []
         self.coins = []
@@ -25,11 +26,6 @@ class App:
 
         self.player_pos = None
         self.enemy_pos = []
-
-        self.load()
-
-        self.player = Player(self, vec(self.player_pos))
-        self.make_enemies()
 
     def run(self):
         while self.running:
@@ -64,13 +60,12 @@ class App:
 
     def load(self):
         self.draw_map()
-        if self.level == 0:
-            self.background = pygame.image.load('maze.png')
-            self.background = pygame.transform.scale(
-                self.background, (MAZE_WIDTH, MAZE_HEIGHT))
+
+    def get_wall_file(self):
+        return "walls_" + str(self.level) + ".txt"
 
     def draw_map(self):
-        with open("walls_0.txt", 'r',) as file:
+        with open(self.wallFile, 'r',) as file:
             for yidx, line in enumerate(file):
                 for xidx, char in enumerate(line):
                     # WALLS
@@ -93,13 +88,13 @@ class App:
     def draw_grid(self):
         for x in range(WIDTH//self.cell_width):
             pygame.draw.line(
-                self.background, GREY, (x*self.cell_width, 0), (x*self.cell_width, HEIGHT))
+                self.screen, GREY, (x*self.cell_width + TOP_BOTTOM_BUFFER//2, 0), (x*self.cell_width + TOP_BOTTOM_BUFFER//2, HEIGHT))
         for x in range(HEIGHT//self.cell_height):
             pygame.draw.line(
-                self.background, GREY, (0, x*self.cell_height), (WIDTH, x*self.cell_height))
+                self.screen, GREY, (0, x*self.cell_height + TOP_BOTTOM_BUFFER//2), (WIDTH, x*self.cell_height + TOP_BOTTOM_BUFFER//2))
         for wall in self.walls:
-            pygame.draw.rect(self.screen, (112, 55, 163), (wall.x*self.cell_width + TOP_BOTTOM_BUFFER//2,
-                                                           wall.y*self.cell_height + TOP_BOTTOM_BUFFER//2, self.cell_width, self.cell_height))
+            pygame.draw.rect(self.screen, (52, 82, 235), (wall.x*self.cell_width + TOP_BOTTOM_BUFFER//2,
+                                                          wall.y*self.cell_height + TOP_BOTTOM_BUFFER//2, self.cell_width, self.cell_height))
 
     def reset(self):
         # Reset player
@@ -117,7 +112,7 @@ class App:
 
         # makes coin from map again
         self.coins = []
-        with open("walls_0.txt", 'r',) as file:
+        with open(self.wallFile, 'r',) as file:
             for yidx, line in enumerate(file):
                 for xidx, char in enumerate(line):
                     if char == 'C':
@@ -142,13 +137,18 @@ class App:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.state = 'playing'
 
+                self.wallFile = self.get_wall_file()
+                self.load()
+                self.player = Player(self, vec(self.player_pos))
+                self.make_enemies()
+
     def start_update(self):
         pass
 
     def start_draw(self):
         self.screen.fill(BLACK)
-        self.draw_text('HIGH SCORE', self.screen, [4, 0], START_TEXT_SIZE,
-                       (255, 255, 255), START_FONT)
+        # self.draw_text('HIGH SCORE', self.screen, [4, 0], START_TEXT_SIZE,
+        #                (255, 255, 255), START_FONT)
         self.draw_text('PUSH SPACE TO START', self.screen, [WIDTH//2, HEIGHT//2 - 50], START_TEXT_SIZE,
                        (170, 132, 58), START_FONT, center=True)
         self.draw_text('1 PLAYER ONLY', self.screen, [WIDTH//2, HEIGHT//2 + 5], START_TEXT_SIZE,
@@ -184,15 +184,15 @@ class App:
 
     def playing_draw(self):
         self.screen.fill(BLACK)
-        self.screen.blit(
-            self.background, (TOP_BOTTOM_BUFFER//2, TOP_BOTTOM_BUFFER//2))
+        # self.screen.blit(
+        #     self.background, (TOP_BOTTOM_BUFFER//2, TOP_BOTTOM_BUFFER//2))
         self.draw_coins()
-        # self.draw_grid()
+        self.draw_grid()
 
         self.draw_text('CURRENT SCORE: {}'.format(self.player.current_score), self.screen,
                        [60, 0], 18, WHITE, START_FONT)
-        self.draw_text('HIGH SCORE: 0', self.screen,
-                       [WIDTH//2 + 60, 0], 18, WHITE, START_FONT)
+        # self.draw_text('HIGH SCORE: 0', self.screen,
+        #                [WIDTH//2 + 60, 0], 18, WHITE, START_FONT)
         self.player.draw()
 
         # draw enemy
