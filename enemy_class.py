@@ -153,6 +153,8 @@ class Enemy:
             return (189, 29, 29)
         if self.number == 3:
             return (215, 159, 33)
+        else:
+            return (0, 0, 0)
 
     def set_personality(self):
         if self.number == 0:

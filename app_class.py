@@ -17,6 +17,7 @@ class App:
         self.state = 'start'
         self.cell_width = MAZE_WIDTH // COLS
         self.cell_height = MAZE_HEIGHT // ROWS
+        self.level = 0
 
         self.walls = []
         self.coins = []
@@ -24,6 +25,7 @@ class App:
 
         self.player_pos = None
         self.enemy_pos = []
+
         self.load()
 
         self.player = Player(self, vec(self.player_pos))
@@ -39,10 +41,10 @@ class App:
                 self.playing_events()
                 self.playing_update()
                 self.playing_draw()
-            elif self.state == 'gameOver':
-                self.gameOver_events()
-                self.gameOver_update()
-                self.gameOver_draw()
+            elif self.state == 'end':
+                self.end_events()
+                self.end_update()
+                self.end_draw()
             else:
                 self.running = False
             self.clock.tick(FPS)
@@ -61,12 +63,14 @@ class App:
         screen.blit(text, position)
 
     def load(self):
-        self.background = pygame.image.load('maze.png')
-        self.background = pygame.transform.scale(
-            self.background, (MAZE_WIDTH, MAZE_HEIGHT))
+        self.draw_map()
+        if self.level == 0:
+            self.background = pygame.image.load('maze.png')
+            self.background = pygame.transform.scale(
+                self.background, (MAZE_WIDTH, MAZE_HEIGHT))
 
-        # Making walls array
-        with open("walls.txt", 'r',) as file:
+    def draw_map(self):
+        with open("walls_0.txt", 'r',) as file:
             for yidx, line in enumerate(file):
                 for xidx, char in enumerate(line):
                     # WALLS
@@ -78,9 +82,9 @@ class App:
                     # PLAYER
                     elif char == "P":
                         self.player_pos = [xidx, yidx]
+                    # ENEMY
                     elif char in ["2", "3", "4", "5"]:
                         self.enemy_pos.append([xidx, yidx])
-        # print(len(self.walls))
 
     def make_enemies(self):
         for idx, position in enumerate(self.enemy_pos):
@@ -113,7 +117,7 @@ class App:
 
         # makes coin from map again
         self.coins = []
-        with open("walls.txt", 'r',) as file:
+        with open("walls_0.txt", 'r',) as file:
             for yidx, line in enumerate(file):
                 for xidx, char in enumerate(line):
                     if char == 'C':
@@ -123,10 +127,18 @@ class App:
 
 ########################################### INTRO FUNCTIONS ###########################################
 
+
     def start_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    if self.level < 5:
+                        self.level += 1
+                if event.key == pygame.K_DOWN:
+                    if self.level > 0:
+                        self.level -= 1
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.state = 'playing'
 
@@ -141,7 +153,7 @@ class App:
                        (170, 132, 58), START_FONT, center=True)
         self.draw_text('1 PLAYER ONLY', self.screen, [WIDTH//2, HEIGHT//2 + 5], START_TEXT_SIZE,
                        (33, 137, 156), START_FONT, center=True)
-        self.draw_text('SELECT LEVEL ', self.screen, [WIDTH//2 - 15, HEIGHT//2 + 55], START_TEXT_SIZE,
+        self.draw_text('SELECT LEVEL: {}'.format(self.level), self.screen, [WIDTH//2, HEIGHT//2 + 55], START_TEXT_SIZE,
                        (247, 243, 242), START_FONT, center=True)
         pygame.display.update()
 
@@ -167,6 +179,8 @@ class App:
             enemy.update()
             if enemy.grid_pos == self.player.grid_pos:
                 self.remove_life()
+        if not self.coins:
+            self.state = "end"
 
     def playing_draw(self):
         self.screen.fill(BLACK)
@@ -190,7 +204,7 @@ class App:
     def remove_life(self):
         self.player.lives -= 1
         if self.player.lives == 0:
-            self.state = "gameOver"
+            self.state = "end"
         else:
             self.player.grid_pos = vec(self.player.starting_pos)
             self.player.pix_pos = self.player.get_pix_pos()
@@ -207,9 +221,9 @@ class App:
             pygame.draw.circle(self.screen, (124, 123, 7), (int(
                 coin.x*self.cell_width) + self.cell_width//2 + TOP_BOTTOM_BUFFER//2, int(coin.y*self.cell_height) + self.cell_height//2 + TOP_BOTTOM_BUFFER//2), 5)
 
-########################################### GAMEOVER FUNCTIONS ###########################################
+########################################### end FUNCTIONS ###########################################
 
-    def gameOver_events(self):
+    def end_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -218,15 +232,19 @@ class App:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.running = False
 
-    def gameOver_update(self):
+    def end_update(self):
         pass
 
-    def gameOver_draw(self):
+    def end_draw(self):
         self.screen.fill(BLACK)
         quit_text = "Press ESC to QUIT"
         again_text = "Press SPACE to PLAY AGAIN"
-        self.draw_text('GAME OVER ', self.screen, [WIDTH//2, 100], 52,
-                       RED, "arial", center=True)
+        if not self.coins:
+            self.draw_text('"CONGRATULATION!!!"  ', self.screen, [WIDTH//2, 180], 52,
+                           YELLOW, "arial", center=True)
+        else:
+            self.draw_text('GAME OVER ', self.screen, [WIDTH//2, 180], 52,
+                           RED, "arial", center=True)
         self.draw_text(again_text, self.screen, [WIDTH//2, HEIGHT//2], 36,
                        (190, 190, 190), "arial", center=True)
         self.draw_text(quit_text, self.screen, [WIDTH//2, HEIGHT//1.5], 36,
