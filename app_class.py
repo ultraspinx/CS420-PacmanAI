@@ -22,6 +22,8 @@ class App:
 
         self.walls = []
         self.coins = []
+        self.empty_grid = []
+        self.empty_grid_score = []
         self.enemies = []
 
         self.player_pos = None
@@ -77,9 +79,12 @@ class App:
                     # PLAYER
                     elif char == "P":
                         self.player_pos = [xidx, yidx]
+                        self.empty_grid.append(vec(xidx, yidx))
                     # ENEMY
                     elif char in ["2", "3", "4", "5"]:
                         self.enemy_pos.append([xidx, yidx])
+                    else:
+                        self.empty_grid.append(vec(xidx, yidx))
 
     def make_enemies(self):
         for idx, position in enumerate(self.enemy_pos):
@@ -239,14 +244,17 @@ class App:
         self.screen.fill(BLACK)
         quit_text = "Press ESC to QUIT"
         again_text = "Press SPACE to PLAY AGAIN"
+        score = "Your score: " + str(self.player.current_score)
         if not self.coins:
             self.draw_text('"CONGRATULATION!!!"  ', self.screen, [WIDTH//2, 180], 52,
                            YELLOW, "arial", center=True)
+            self.draw_text(score, self.screen, [WIDTH//2, HEIGHT//2], 36,
+                           (190, 190, 190), "arial", center=True)
         else:
             self.draw_text('GAME OVER ', self.screen, [WIDTH//2, 180], 52,
                            RED, "arial", center=True)
-        self.draw_text(again_text, self.screen, [WIDTH//2, HEIGHT//2], 36,
-                       (190, 190, 190), "arial", center=True)
+            self.draw_text(again_text, self.screen, [WIDTH//2, HEIGHT//2], 36,
+                           (190, 190, 190), "arial", center=True)
         self.draw_text(quit_text, self.screen, [WIDTH//2, HEIGHT//1.5], 36,
                        (190, 190, 190), "arial", center=True)
         pygame.display.update()

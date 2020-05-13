@@ -20,8 +20,9 @@ class Player:
 
     def update(self):
         if self.able_to_move:
+            self.temp = self.pix_pos
             self.pix_pos += self.direction  # * self.speed
-            #print(self.pix_pos)
+            # print(self.pix_pos)
         if self.time_to_move():
             if self.stored_direction != None:
                 self.direction = self.stored_direction
@@ -33,10 +34,22 @@ class Player:
         self.grid_pos[1] = (
             self.pix_pos[1] - TOP_BOTTOM_BUFFER // 2) // self.app.cell_height
 
-        if self.on_coin():
+        if self.mid_grid():
             self.eat_coin()
+        else:
+            self.minus_one_score()
 
-    def on_coin(self):
+    def minus_one_score(self):
+        if self.grid_pos in self.app.empty_grid and len(self.app.empty_grid_score) == 0 and self.grid_pos not in self.app.empty_grid_score:
+            #print("we got empty grid in")
+            self.app.empty_grid_score.append(
+                [self.grid_pos[0], self.grid_pos[1]])
+        if self.grid_pos in self.app.empty_grid and len(self.app.empty_grid_score) == 1:
+            if [self.grid_pos[0], self.grid_pos[1]] not in self.app.empty_grid_score:
+                self.app.empty_grid_score.pop()
+                self.current_score -= 1
+
+    def mid_grid(self):
         if self.grid_pos in self.app.coins:
             # eat coin when at center
             if int(self.pix_pos.x + TOP_BOTTOM_BUFFER // 2) % self.app.cell_width == 0:
