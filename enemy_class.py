@@ -26,7 +26,7 @@ class Enemy:
             if self.time_to_move():
                 self.move()
 
-        # Tracking the enemy
+        # Tracking the enemy position
         self.grid_pos[0] = (
             self.pix_pos[0] - TOP_BOTTOM_BUFFER // 2) // self.app.cell_width
         self.grid_pos[1] = (
@@ -43,19 +43,6 @@ class Enemy:
             speed = 0.5
         return speed
 
-    def set_target(self):
-        if self.personality == "speedy" or self.personality == "slow":
-            return self.app.player.grid_pos
-        else:
-            if self.app.player.grid_pos[0] > COLS//2 and self.app.player.grid_pos[1] > ROWS//2:
-                return vec(1, 1)
-            if self.app.player.grid_pos[0] > COLS//2 and self.app.player.grid_pos[1] > ROWS//2:
-                return vec(1, ROWS - 2)
-            if self.app.player.grid_pos[0] < COLS//2 and self.app.player.grid_pos[1] > ROWS//2:
-                return vec(COLS-2, 1)
-            else:
-                return vec(COLS-2, ROWS-2)
-
     def time_to_move(self):
         if int(self.pix_pos.x + TOP_BOTTOM_BUFFER // 2) % self.app.cell_width == 0:
             if self.direction == vec(1, 0) or self.direction == vec(-1, 0) or self.direction == vec(0, 0):
@@ -68,15 +55,28 @@ class Enemy:
     def move(self):
         if self.personality == "random":
             self.direction = self.get_random_direction()
-        if self.personality == "slow":
-            # self.get_path_direction(self.target)
-            self.direction = self.get_random_direction()
         if self.personality == "speedy":
-            # self.get_path_direction(self.target)
+            #self.direction = self.get_path_direction(self.target)
+            self.direction = self.get_random_direction()
+        if self.personality == "slow":
+            #self.direction = self.get_path_direction(self.target)
             self.direction = self.get_random_direction()
         if self.personality == "scared":
-            # self.get_path_direction(self.target)
-            self.direction = self.get_random_direction()
+            # this one has a bug on small map
+            self.direction = self.get_path_direction(self.target)
+
+    def set_target(self):
+        if self.personality == "speedy" or self.personality == "slow":
+            return self.app.player.grid_pos
+        else:
+            if self.app.player.grid_pos[0] > COLS//2 and self.app.player.grid_pos[1] > ROWS//2:
+                return vec(1, 1)
+            if self.app.player.grid_pos[0] > COLS//2 and self.app.player.grid_pos[1] < ROWS//2:
+                return vec(1, ROWS-2)
+            if self.app.player.grid_pos[0] < COLS//2 and self.app.player.grid_pos[1] > ROWS//2:
+                return vec(COLS-2, 1)
+            else:
+                return vec(COLS-2, ROWS-2)
 
     def get_path_direction(self, target):
         next_cell = self.find_next_cell_in_path(target)
@@ -157,7 +157,7 @@ class Enemy:
         if self.number == 3:
             return (215, 159, 33)
         else:
-            return (0, 0, 0)
+            return (1, 1, 1)
 
     def set_personality(self):
         if self.number == 0:

@@ -74,14 +74,14 @@ class App:
                     if char == "1":
                         self.walls.append(vec(xidx, yidx))
                     # COINS
-                    elif char == "C":
+                    elif char == "2":
                         self.coins.append(vec(xidx, yidx))
                     # PLAYER
                     elif char == "P":
                         self.player_pos = [xidx, yidx]
                         self.empty_grid.append(vec(xidx, yidx))
                     # ENEMY
-                    elif char in ["2", "3", "4", "5"]:
+                    elif char in ["3", "4", "5", "6"]:
                         self.enemy_pos.append([xidx, yidx])
                     else:
                         self.empty_grid.append(vec(xidx, yidx))
@@ -120,7 +120,7 @@ class App:
         with open(self.wallFile, 'r',) as file:
             for yidx, line in enumerate(file):
                 for xidx, char in enumerate(line):
-                    if char == 'C':
+                    if char == '2':
                         self.coins.append(vec(xidx, yidx))
         self.state = "playing"
 
@@ -246,7 +246,7 @@ class App:
         again_text = "Press SPACE to PLAY AGAIN"
         score = "Your score: " + str(self.player.current_score)
         if not self.coins:
-            self.draw_text('"CONGRATULATION!!!"  ', self.screen, [WIDTH//2, 180], 52,
+            self.draw_text('CONGRATULATION!!!', self.screen, [WIDTH//2, 180], 52,
                            YELLOW, "arial", center=True)
             self.draw_text(score, self.screen, [WIDTH//2, HEIGHT//2], 36,
                            (190, 190, 190), "arial", center=True)

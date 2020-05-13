@@ -39,16 +39,6 @@ class Player:
         else:
             self.minus_one_score()
 
-    def minus_one_score(self):
-        if self.grid_pos in self.app.empty_grid and len(self.app.empty_grid_score) == 0 and self.grid_pos not in self.app.empty_grid_score:
-            #print("we got empty grid in")
-            self.app.empty_grid_score.append(
-                [self.grid_pos[0], self.grid_pos[1]])
-        if self.grid_pos in self.app.empty_grid and len(self.app.empty_grid_score) == 1:
-            if [self.grid_pos[0], self.grid_pos[1]] not in self.app.empty_grid_score:
-                self.app.empty_grid_score.pop()
-                self.current_score -= 1
-
     def mid_grid(self):
         if self.grid_pos in self.app.coins:
             # eat coin when at center
@@ -63,6 +53,16 @@ class Player:
     def eat_coin(self):
         self.app.coins.remove(self.grid_pos)
         self.current_score += 20
+
+    def minus_one_score(self):
+        if self.grid_pos in self.app.empty_grid and len(self.app.empty_grid_score) == 0 and self.grid_pos not in self.app.empty_grid_score:
+            #print("we got empty grid in")
+            self.app.empty_grid_score.append(
+                [self.grid_pos[0], self.grid_pos[1]])
+        if self.grid_pos in self.app.empty_grid and len(self.app.empty_grid_score) == 1:
+            if [self.grid_pos[0], self.grid_pos[1]] not in self.app.empty_grid_score:
+                self.app.empty_grid_score.pop()
+                self.current_score -= 1
 
     def draw(self):
         pygame.draw.circle(self.app.screen, PLAYER_COLOR,
