@@ -64,7 +64,7 @@ class App:
         self.draw_map()
 
     def get_wall_file(self):
-        return "walls_" + str(self.level) + ".txt"
+        return "map" + str(self.level) + ".txt"
 
     def draw_map(self):
         with open(self.wallFile, 'r',) as file:
