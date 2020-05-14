@@ -79,9 +79,8 @@ class App:
                     # PLAYER
                     elif char == "P":
                         self.player_pos = [xidx, yidx]
-                        self.empty_grid.append(vec(xidx, yidx))
                     # ENEMY
-                    elif char in ["3", "4", "5", "6"]:
+                    elif char == "3":
                         self.enemy_pos.append([xidx, yidx])
                     else:
                         self.empty_grid.append(vec(xidx, yidx))
@@ -127,7 +126,6 @@ class App:
 
 ########################################### INTRO FUNCTIONS ###########################################
 
-
     def start_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -168,15 +166,15 @@ class App:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    self.player.move(vec(-1, 0))
-                if event.key == pygame.K_RIGHT:
-                    self.player.move(vec(1, 0))
-                if event.key == pygame.K_UP:
-                    self.player.move(vec(0, -1))
-                if event.key == pygame.K_DOWN:
-                    self.player.move(vec(0, 1))
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_LEFT:
+            #         self.player.move(vec(-1, 0))
+            #     if event.key == pygame.K_RIGHT:
+            #         self.player.move(vec(1, 0))
+            #     if event.key == pygame.K_UP:
+            #         self.player.move(vec(0, -1))
+            #     if event.key == pygame.K_DOWN:
+            #         self.player.move(vec(0, 1))
 
     def playing_update(self):
         self.player.update()

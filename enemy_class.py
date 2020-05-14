@@ -8,8 +8,8 @@ vec = pygame.math.Vector2
 class Enemy:
     def __init__(self, app, pos, number):
         self.app = app
-        self.grid_pos = pos
         self.starting_pos = [pos.x, pos.y]
+        self.grid_pos = pos
         self.pix_pos = self.get_pix_pos()
         self.radius = int(self.app.cell_width//2.3)
         self.number = number
@@ -53,20 +53,22 @@ class Enemy:
         return False
 
     def move(self):
-        if self.personality == "random":
-            self.direction = self.get_random_direction()
-        if self.personality == "speedy":
-            #self.direction = self.get_path_direction(self.target)
-            self.direction = self.get_random_direction()
-        if self.personality == "slow":
-            #self.direction = self.get_path_direction(self.target)
-            self.direction = self.get_random_direction()
-        if self.personality == "scared":
+        pass
+        # if self.personality == "random":
+        #     self.direction = self.get_random_direction()
+        # if self.personality == "speedy":
+        #     #self.direction = self.get_path_direction(self.target)
+        #     self.direction = self.get_random_direction()
+        # if self.personality == "slow":
+        #     self.direction = self.get_path_direction(self.target)
+        #     #self.direction = self.get_random_direction()
+        #if self.personality == "scared":
             # this one has a bug on small map
-            self.direction = self.get_path_direction(self.target)
+            #self.direction = self.get_path_direction(self.target)
 
     def set_target(self):
         if self.personality == "speedy" or self.personality == "slow":
+            #print("player: " + str(self.app.player.grid_pos))
             return self.app.player.grid_pos
         else:
             if self.app.player.grid_pos[0] > COLS//2 and self.app.player.grid_pos[1] > ROWS//2:
