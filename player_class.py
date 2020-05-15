@@ -122,6 +122,7 @@ class Player:
         return path[1]
 
     def BFS(self, start_pos, target_pos):
+        count = 0
         grid = [[0 for x in range(28)] for x in range(30)]
         for cell in self.app.walls:
             if cell.x < 28 and cell.y < 30:
@@ -151,6 +152,7 @@ class Player:
                                     path.append(
                                         {"Current":  current, "Next":  next_cell})
         shortest = [target_pos]
+
         while target_pos != start_pos:
             for step in path:
                 if step["Next"] == target_pos:

@@ -40,7 +40,7 @@ class Enemy:
         if self.personality in ["speedy", "scared"]:
             speed = 1
         else:
-            speed = 0.5
+            speed = 1
         return speed
 
     def time_to_move(self):
@@ -53,16 +53,16 @@ class Enemy:
         return False
 
     def move(self):
-        pass
-        # if self.personality == "random":
-        #     self.direction = self.get_random_direction()
-        # if self.personality == "speedy":
-        #     #self.direction = self.get_path_direction(self.target)
-        #     self.direction = self.get_random_direction()
-        # if self.personality == "slow":
-        #     self.direction = self.get_path_direction(self.target)
-        #     #self.direction = self.get_random_direction()
-        #if self.personality == "scared":
+        # pass
+        if self.personality == "random":
+            self.direction = self.get_random_direction()
+        if self.personality == "speedy":
+            #self.direction = self.get_path_direction(self.target)
+            self.direction = self.get_random_direction()
+        if self.personality == "slow":
+            #self.direction = self.get_path_direction(self.target)
+            self.direction = self.get_random_direction()
+        # if self.personality == "scared":
             # this one has a bug on small map
             #self.direction = self.get_path_direction(self.target)
 
