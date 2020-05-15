@@ -23,7 +23,7 @@ class Player:
     def update(self):
         self.target = self.set_target()
         if self.target != self.grid_pos:
-            self.pix_pos += self.direction  # * self.speed
+            self.pix_pos += self.direction * self.speed
             if self.time_to_move():
                 self.move(None)
         else:
@@ -135,6 +135,9 @@ class Player:
             visited.append(current)
             if current == target_pos:
                 break
+            for enemy in self.app.enemies:
+                if current == enemy.grid_pos:
+                    break
             else:
                 neighbours = [[0, -1], [1, 0], [0, 1], [-1, 0]]
                 for neighbour in neighbours:
