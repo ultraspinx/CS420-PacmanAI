@@ -8,6 +8,7 @@ from enemy_class import *
 pygame.init()
 vec = pygame.math.Vector2
 
+pygame.display.set_caption("Pacman - AI project")
 
 class App:
     def __init__(self):
@@ -126,6 +127,7 @@ class App:
 
 ########################################### INTRO FUNCTIONS ###########################################
 
+
     def start_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -139,7 +141,6 @@ class App:
                         self.level -= 1
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.state = 'playing'
-
                 self.wallFile = self.get_wall_file()
                 self.load()
                 self.player = Player(self, vec(self.player_pos))
@@ -150,8 +151,6 @@ class App:
 
     def start_draw(self):
         self.screen.fill(BLACK)
-        # self.draw_text('HIGH SCORE', self.screen, [4, 0], START_TEXT_SIZE,
-        #                (255, 255, 255), START_FONT)
         self.draw_text('PUSH SPACE TO START', self.screen, [WIDTH//2, HEIGHT//2 - 50], START_TEXT_SIZE,
                        (170, 132, 58), START_FONT, center=True)
         self.draw_text('1 PLAYER ONLY', self.screen, [WIDTH//2, HEIGHT//2 + 5], START_TEXT_SIZE,
@@ -187,18 +186,14 @@ class App:
 
     def playing_draw(self):
         self.screen.fill(BLACK)
-        # self.screen.blit(
-        #     self.background, (TOP_BOTTOM_BUFFER//2, TOP_BOTTOM_BUFFER//2))
         self.draw_coins()
         self.draw_grid()
 
         self.draw_text('CURRENT SCORE: {}'.format(self.player.current_score), self.screen,
                        [60, 0], 18, WHITE, START_FONT)
-        # self.draw_text('HIGH SCORE: 0', self.screen,
-        #                [WIDTH//2 + 60, 0], 18, WHITE, START_FONT)
+
         self.player.draw()
 
-        # draw enemy
         for enemy in self.enemies:
             enemy.draw()
 

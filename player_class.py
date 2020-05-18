@@ -57,7 +57,6 @@ class Player:
 
     def minus_one_score(self):
         if self.grid_pos in self.app.empty_grid and len(self.app.empty_grid_score) == 0 and self.grid_pos not in self.app.empty_grid_score:
-            #print("we got empty grid in")
             self.app.empty_grid_score.append(
                 [self.grid_pos[0], self.grid_pos[1]])
         if self.grid_pos in self.app.empty_grid and len(self.app.empty_grid_score) == 1:
@@ -92,7 +91,7 @@ class Player:
             if self.direction == vec(0, 1) or self.direction == vec(0, -1) or self.direction == vec(0, 0):
                 return True
 
-    # unesscessary already check in BFS => For human player
+    # unesscessary already check in BFS => The function is for human player
     def can_move(self):
         for wall in self.app.walls:
             if vec(self.grid_pos+self.direction) == wall:
@@ -106,23 +105,26 @@ class Player:
     # AI - pacman functions
     def set_target(self):
         for x_id, y_id in self.app.coins:
-            #print(vec(x_id, y_id))
             return vec(x_id, y_id)
 
     def get_path_direction(self, target):
         next_cell = self.find_next_cell_in_path(target)
-        xdir = next_cell[0] - self.grid_pos[0]
-        ydir = next_cell[1] - self.grid_pos[1]
-        return vec(xdir, ydir)
+        if next_cell != 0:
+            xdir = next_cell[0] - self.grid_pos[0]
+            ydir = next_cell[1] - self.grid_pos[1]
+            return vec(xdir, ydir)
+        else:
+            return vec(0, 0)
 
     def find_next_cell_in_path(self, target):
         path = self.BFS([int(self.grid_pos.x), int(self.grid_pos.y)], [
                         int(target[0]), int(target[1])])
-
-        return path[1]
+        if path != 0:
+            return path[1]
+        else:
+            return 0
 
     def BFS(self, start_pos, target_pos):
-        count = 0
         grid = [[0 for x in range(28)] for x in range(30)]
         for cell in self.app.walls:
             if cell.x < 28 and cell.y < 30:
@@ -144,15 +146,20 @@ class Player:
                 for neighbour in neighbours:
                     if neighbour[0] + current[0] >= 0 and neighbour[0] + current[0] < len(grid[0]):
                         if neighbour[1] + current[1] >= 0 and neighbour[1] + current[1] < len(grid):
-                            next_cell = [
-                                neighbour[0] + current[0], neighbour[1] + current[1]]
+                            next_cell = [neighbour[0] + current[0],
+                                         neighbour[1] + current[1]]
                             if next_cell not in visited:
                                 if grid[next_cell[1]][next_cell[0]] != 1:
+                                    # for enemy in self.app.enemies:
+                                    #     if next_cell != enemy.grid_pos:
                                     queue.append(next_cell)
                                     path.append(
                                         {"Current":  current, "Next":  next_cell})
         shortest = [target_pos]
-
+        check = [step['Next'] for step in path]
+        if target_pos not in check:
+            return 0
+        # backtracking
         while target_pos != start_pos:
             for step in path:
                 if step["Next"] == target_pos:
