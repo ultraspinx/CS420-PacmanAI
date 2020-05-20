@@ -68,7 +68,6 @@ class Enemy:
 
     def set_target(self):
         if self.personality == "speedy" or self.personality == "slow":
-            #print("player: " + str(self.app.player.grid_pos))
             return self.app.player.grid_pos
         else:
             if self.app.player.grid_pos[0] > COLS//2 and self.app.player.grid_pos[1] > ROWS//2:

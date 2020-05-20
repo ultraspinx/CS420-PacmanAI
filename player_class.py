@@ -99,11 +99,15 @@ class Player:
         return True
 
     def move(self, direction):
-        #self.stored_direction = direction
+        # self.stored_direction = direction
         self.direction = self.get_path_direction(self.target)
 
     # AI - pacman functions
     def set_target(self):
+        # coins heuristic
+        self.app.coins.sort(key=lambda list: (
+            abs(list[0] - self.grid_pos[0]), abs(list[1] - self.grid_pos[1])))
+
         for x_id, y_id in self.app.coins:
             return vec(x_id, y_id)
 
@@ -134,8 +138,10 @@ class Player:
         visited = []
         while queue:
             current = queue[0]
+            print(current)
             queue.remove(queue[0])
             visited.append(current)
+
             if current == target_pos:
                 break
             for enemy in self.app.enemies:
@@ -150,12 +156,11 @@ class Player:
                                          neighbour[1] + current[1]]
                             if next_cell not in visited:
                                 if grid[next_cell[1]][next_cell[0]] != 1:
-                                    # for enemy in self.app.enemies:
-                                    #     if next_cell != enemy.grid_pos:
                                     queue.append(next_cell)
                                     path.append(
                                         {"Current":  current, "Next":  next_cell})
         shortest = [target_pos]
+        # no solution
         check = [step['Next'] for step in path]
         if target_pos not in check:
             return 0
