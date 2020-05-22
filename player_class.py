@@ -29,6 +29,7 @@ class Player:
                     self.direction = self.stored_direction
                 self.able_to_move = self.can_move()
         else:
+
             self.target = self.set_target()
             if self.target != self.grid_pos:
                 self.pix_pos += self.direction * self.speed
@@ -99,7 +100,6 @@ class Player:
             if self.direction == vec(0, 1) or self.direction == vec(0, -1) or self.direction == vec(0, 0):
                 return True
 
-    # unesscessary already check in BFS => The function is for human player
     def can_move(self):
         for wall in self.app.walls:
             if vec(self.grid_pos+self.direction) == wall:
@@ -115,8 +115,8 @@ class Player:
     def set_target(self):
         # coins heuristic
         self.app.coins.sort(key=lambda list: (
-            abs(list[0] - self.grid_pos[0]), abs(list[1] - self.grid_pos[1])))
-
+            abs(list[0] - self.grid_pos[0]) + abs(list[1] - self.grid_pos[1])))
+        print(self.app.coins)
         for x_id, y_id in self.app.coins:
             return vec(x_id, y_id)
 
