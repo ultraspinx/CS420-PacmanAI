@@ -37,8 +37,10 @@ class Enemy:
                            (int(self.pix_pos.x), int(self.pix_pos.y)), self.radius)
 
     def set_speed(self):
-        if self.personality in ["speedy", "scared"]:
-            speed = 1
+        if self.personality == "speedy":
+            speed = 2
+        elif self.personality == "slow":
+            speed = 0.5
         else:
             speed = 1
         return speed
@@ -53,18 +55,24 @@ class Enemy:
         return False
 
     def move(self):
-        # pass
-        if self.personality == "random":
-            self.direction = self.get_random_direction()
-        if self.personality == "speedy":
-            #self.direction = self.get_path_direction(self.target)
-            self.direction = self.get_random_direction()
-        if self.personality == "slow":
-            #self.direction = self.get_path_direction(self.target)
-            self.direction = self.get_random_direction()
-        # if self.personality == "scared":
-            # this one has a bug on small map
-            #self.direction = self.get_path_direction(self.target)
+        if self.app.level == 3:
+            if self.personality == "random":
+                self.direction = self.get_random_direction()
+            if self.personality == "speedy":
+                self.direction = self.get_random_direction()
+            if self.personality == "slow":
+                self.direction = self.get_random_direction()
+            if self.personality == "scared":
+                self.direction = self.get_path_direction(self.target)
+        elif self.app.level == 4 or self.app.level == 0:
+            if self.personality == "random":
+                self.direction = self.get_random_direction()
+            if self.personality == "speedy":
+                self.direction = self.get_path_direction(self.target)
+            if self.personality == "slow":
+                self.direction = self.get_path_direction(self.target)
+            if self.personality == "scared":
+                self.direction = self.get_path_direction(self.target)
 
     def set_target(self):
         if self.personality == "speedy" or self.personality == "slow":
@@ -81,15 +89,20 @@ class Enemy:
 
     def get_path_direction(self, target):
         next_cell = self.find_next_cell_in_path(target)
-        xdir = next_cell[0] - self.grid_pos[0]
-        ydir = next_cell[1] - self.grid_pos[1]
-        return vec(xdir, ydir)
+        if next_cell != 0:
+            xdir = next_cell[0] - self.grid_pos[0]
+            ydir = next_cell[1] - self.grid_pos[1]
+            return vec(xdir, ydir)
+        else:
+            return vec(0, 0)
 
     def find_next_cell_in_path(self, target):
         path = self.BFS([int(self.grid_pos.x), int(self.grid_pos.y)], [
                         int(target[0]), int(target[1])])
-
-        return path[1]
+        if path != 0:
+            return path[1]
+        else:
+            return 0
 
     def BFS(self, start_pos, target_pos):
         grid = [[0 for x in range(28)] for x in range(30)]
@@ -118,6 +131,11 @@ class Enemy:
                                     path.append(
                                         {"Current":  current, "Next":  next_cell})
         shortest = [target_pos]
+        # no solution
+        check = [step['Next'] for step in path]
+        if target_pos not in check:
+            return 0
+        # backtracking
         while target_pos != start_pos:
             for step in path:
                 if step["Next"] == target_pos:

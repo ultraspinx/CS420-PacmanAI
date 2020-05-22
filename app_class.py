@@ -10,6 +10,7 @@ vec = pygame.math.Vector2
 
 pygame.display.set_caption("Pacman - AI project")
 
+
 class App:
     def __init__(self):
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -19,6 +20,7 @@ class App:
         self.cell_width = MAZE_WIDTH // COLS
         self.cell_height = MAZE_HEIGHT // ROWS
         self.level = 0
+        self.map = 0
         self.wallFile = self.get_wall_file()
 
         self.walls = []
@@ -65,7 +67,7 @@ class App:
         self.draw_map()
 
     def get_wall_file(self):
-        return "map" + str(self.level) + ".txt"
+        return "map" + str(self.map) + ".txt"
 
     def draw_map(self):
         with open(self.wallFile, 'r',) as file:
@@ -80,9 +82,11 @@ class App:
                     # PLAYER
                     elif char == "P":
                         self.player_pos = [xidx, yidx]
+                        self.empty_grid.append(vec(xidx, yidx))
                     # ENEMY
-                    elif char == "3":
+                    elif char == "3" and self.level != 1:
                         self.enemy_pos.append([xidx, yidx])
+                        self.empty_grid.append(vec(xidx, yidx))
                     else:
                         self.empty_grid.append(vec(xidx, yidx))
 
@@ -127,18 +131,23 @@ class App:
 
 ########################################### INTRO FUNCTIONS ###########################################
 
-
     def start_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    if self.level < 5:
+                    if self.level < 4:
                         self.level += 1
                 if event.key == pygame.K_DOWN:
                     if self.level > 0:
                         self.level -= 1
+                if event.key == pygame.K_RIGHT:
+                    if self.map < 5:
+                        self.map += 1
+                if event.key == pygame.K_LEFT:
+                    if self.map > 0:
+                        self.map -= 1
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.state = 'playing'
                 self.wallFile = self.get_wall_file()
@@ -152,11 +161,17 @@ class App:
     def start_draw(self):
         self.screen.fill(BLACK)
         self.draw_text('PUSH SPACE TO START', self.screen, [WIDTH//2, HEIGHT//2 - 50], START_TEXT_SIZE,
-                       (170, 132, 58), START_FONT, center=True)
-        self.draw_text('1 PLAYER ONLY', self.screen, [WIDTH//2, HEIGHT//2 + 5], START_TEXT_SIZE,
+                       (252, 255, 18), START_FONT, center=True)
+        self.draw_text('1 PLAYER ONLY', self.screen, [WIDTH//2, HEIGHT//2], START_TEXT_SIZE,
                        (33, 137, 156), START_FONT, center=True)
-        self.draw_text('SELECT LEVEL: {}'.format(self.level), self.screen, [WIDTH//2, HEIGHT//2 + 55], START_TEXT_SIZE,
-                       (247, 243, 242), START_FONT, center=True)
+        self.draw_text('SELECT LEVEL: {}'.format(self.level), self.screen, [WIDTH//2, HEIGHT//2 + 50], START_TEXT_SIZE,
+                       (255, 43, 18), START_FONT, center=True)
+
+        mapNames = ["No Escape!!!", "Map 1",
+                    "Map 2", "Map 3", "Map 4", "Map 5"]
+
+        self.draw_text('<< {} >>'.format(mapNames[self.map]), self.screen, [WIDTH//2, HEIGHT//2 + 100], 18,
+                       (255, 104, 0), START_FONT, center=True)
         pygame.display.update()
 
 ########################################### PLAYING FUNCTIONS ###########################################
@@ -165,15 +180,16 @@ class App:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_LEFT:
-            #         self.player.move(vec(-1, 0))
-            #     if event.key == pygame.K_RIGHT:
-            #         self.player.move(vec(1, 0))
-            #     if event.key == pygame.K_UP:
-            #         self.player.move(vec(0, -1))
-            #     if event.key == pygame.K_DOWN:
-            #         self.player.move(vec(0, 1))
+            if self.level == 0:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        self.player.moveHuman(vec(-1, 0))
+                    if event.key == pygame.K_RIGHT:
+                        self.player.moveHuman(vec(1, 0))
+                    if event.key == pygame.K_UP:
+                        self.player.moveHuman(vec(0, -1))
+                    if event.key == pygame.K_DOWN:
+                        self.player.moveHuman(vec(0, 1))
 
     def playing_update(self):
         self.player.update()
