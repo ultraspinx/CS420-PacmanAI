@@ -89,10 +89,6 @@ class App:
                         self.empty_grid.append(vec(xidx, yidx))
                     else:
                         self.empty_grid.append(vec(xidx, yidx))
-        if self.level == 1 or self.level == 2:
-            coinsTemp = random.choice(self.coins)
-            self.coins.clear()
-            self.coins.append(coinsTemp)
 
     def make_enemies(self):
         for idx, position in enumerate(self.enemy_pos):
@@ -134,6 +130,7 @@ class App:
 
 
 ########################################### INTRO FUNCTIONS ###########################################
+
 
     def start_events(self):
         for event in pygame.event.get():
@@ -235,6 +232,11 @@ class App:
                 enemy.direction *= 0
 
     def draw_coins(self):
+        if self.level == 1 or self.level == 2:
+            if len(self.coins) > 1:
+                coinsTemp = random.choice(self.coins)
+                self.coins.clear()
+                self.coins.append(coinsTemp)
         for coin in self.coins:
             pygame.draw.circle(self.screen, (124, 123, 7), (int(
                 coin.x*self.cell_width) + self.cell_width//2 + TOP_BOTTOM_BUFFER//2, int(coin.y*self.cell_height) + self.cell_height//2 + TOP_BOTTOM_BUFFER//2), 5)
