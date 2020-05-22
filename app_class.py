@@ -1,6 +1,6 @@
 import pygame
 import sys
-import copy
+import random
 from settings import *
 from player_class import *
 from enemy_class import *
@@ -89,6 +89,10 @@ class App:
                         self.empty_grid.append(vec(xidx, yidx))
                     else:
                         self.empty_grid.append(vec(xidx, yidx))
+        if self.level == 1 or self.level == 2:
+            coinsTemp = random.choice(self.coins)
+            self.coins.clear()
+            self.coins.append(coinsTemp)
 
     def make_enemies(self):
         for idx, position in enumerate(self.enemy_pos):

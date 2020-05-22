@@ -116,7 +116,6 @@ class Player:
         # coins heuristic
         self.app.coins.sort(key=lambda list: (
             abs(list[0] - self.grid_pos[0]) + abs(list[1] - self.grid_pos[1])))
-        print(self.app.coins)
         for x_id, y_id in self.app.coins:
             return vec(x_id, y_id)
 
